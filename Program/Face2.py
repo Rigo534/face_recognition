@@ -3,12 +3,18 @@ import mediapipe as mp
 import os
 import pickle
 import face_recognition
+import firebase_admin
+from firebase_admin import credentials
+
+# cred = credentials.Certificate("Program/serviceAccountKey.json")
+# firebase_admin.initialize_app(cred)
+
 
 mp_face_detection = mp.solutions.face_detection
 face_detection = mp_face_detection.FaceDetection()
 
 camera = cv2.VideoCapture(0)
-file = open("EncodeFile.pkl", 'rb')
+file = open("Encode", 'rb')
 face_encoded_with_names = pickle.load(file)
 file.close()
 face_encodings, face_names = face_encoded_with_names
@@ -44,7 +50,7 @@ while True:
     face_images = [frame[top:bottom, left:right] for (top, right, bottom, left) in face_locations]
     for face_image, (top, right, bottom, left) in zip(face_images, face_locations):
         face_encoding = face_recognition.face_encodings(face_image)
-        # print(face_encoding)
+
         if len(face_encoding) > 0:
             matches = face_recognition.compare_faces(face_encodings, face_encoding[0], tolerance=0.5)
             name = "Unknown"
@@ -57,7 +63,7 @@ while True:
             cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
             cv2.imshow('Video', frame)
     
-    if cv2.waitKey(1) & 0xFF == ord('q'): # Tekan tombol 'q' untuk keluar dari program
+    if cv2.waitKey(1) & 0xFF == ord('q'): 
         break
         
 video_capture.release()
