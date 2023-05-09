@@ -2,24 +2,20 @@ import cv2
 import face_recognition
 import pickle
 import numpy as np
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import db
-from firebase_admin import storage
+import mysql.connector 
+
+db = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="",
+    database="coba_db"
+)
+cursor = db.cursor()
 from subprocess import call
-
-cred = credentials.Certificate('Program/serviceAccountKey.json')
-firebase_admin.initialize_app(cred, {
-    'databaseURL' : "https://facerecognitionattendanc-ff2b5-default-rtdb.asia-southeast1.firebasedatabase.app/",
-    'storageBucket' : "facerecognitionattendanc-ff2b5.appspot.com"
-})
-
 
 call(['python', "Program/EncodingProcess.py"])
 camera = cv2.VideoCapture(0)
-ref = db.reference('Employee')
-data = ref.get()
-print(data)
+
 # camera.set(3, 640)
 # camera.set(4, 480)
 
@@ -44,9 +40,13 @@ while True:
         face_matching = np.argmin(face_distance)
         if face_distance[face_matching]< 0.5:
             id = face_id[face_matching]
-            name = data[id]["Nama"].upper()
+            name = "SELECT image_name FROM tabeldataset WHERE id = %(id)s";    
+            val = {'id': id}
+            cursor.execute(name, val)
+            name = cursor.fetchone()
+            name = str(name[0])
         else:
-            name = 'Unknown'
+            id = 'Unknown'
         y1, x2, y2, x1 = facelocation
         y1, x2, y2, x1 = y1*4, x2*4, y2*4, x1*4
         cv2.rectangle(frame,(x1,y1),(x2,y2),(0,255,0),2)
