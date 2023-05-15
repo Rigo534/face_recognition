@@ -21,7 +21,6 @@ for img in face_images:
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img_encoding = face_recognition.face_encodings(img)[0]
     face_encoding.append(img_encoding)
-print(face_encoding)
 face_encoded_with_id = [face_encoding, face_id]
 
 file = open("Encode", 'wb')

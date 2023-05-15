@@ -11,7 +11,6 @@ SQLALCHEMY_DATABASE_URL = ("mysql+pymysql://root@localhost:3306/coba_db")
 engine = create_engine(
         SQLALCHEMY_DATABASE_URL
     )
-
 #mapped
 Base = declarative_base()
 class datasetImage(Base):
@@ -34,7 +33,6 @@ def get_image_name_by_id(id):
         return image.image_name
     else:
         return None
-
 # datasetImage()
 add_image(185928395628, 'Ricky Gosal')
 add_image(189387523798, 'Elon Musk')
