@@ -29,12 +29,13 @@ from subprocess import call
 
 call(['python', "Program/EncodingProcess.py"])
 camera = cv2.VideoCapture(0)
+process_this_frame = True
 # camera.set(3, 640)
 # camera.set(4, 480)
 file = open("Encode", 'rb')
-face_encoded_with_id = pickle.load(file)
+face_encoded_with_names = pickle.load(file)
 file.close()
-face_encodings, face_id = face_encoded_with_id
+face_encodings, face_names = face_encoded_with_names
 face_locations = []
 
 while True:
@@ -57,19 +58,19 @@ while True:
             print(face_distance)
             face_matching = np.argmin(face_distance)
             if face_distance[face_matching]< 0.5:
-                id = face_id[face_matching]
-                name = "SELECT image_name FROM tabeldataset WHERE id = %(id)s";    
-                val = {'id': id}
-                cursor.execute(name, val)
-                name = cursor.fetchone()
-                name = str(name[0])
+                name = face_names[face_matching]
+                # name = "SELECT image_name FROM tabeldataset WHERE id = %(id)s";    
+                # val = {'id': id}
+                # cursor.execute(name, val)
+                # name = cursor.fetchone()
+                # name = str(name[0])
             else:
                 id = 'Unknown'
                 name = 'Unknown'
         else:
             print(facelocationcamera[0][1] - facelocationcamera[0][3])
             name = 'unknown'
-        
+        process_this_frame = not process_this_frame       
         y1, x2, y2, x1 = facelocation
         y1, x2, y2, x1 = y1*4, x2*4, y2*4, x1*4
         cv2.rectangle(frame,(x1,y1),(x2,y2),(0,255,0),2)
